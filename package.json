@@ -1,0 +1,20 @@
+{
+	"name": "chatbench",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/main.js",
+	"scripts": {
+		"build": "tsc",
+		"start": "nodemon -e ts,tsx --watch src --exec \"electron -r ts-node/register ./src/main.ts\""
+	},
+	"author": "",
+	"license": "UNLICENSED",
+	"dependencies": {
+		"electron": "^25.1.1"
+	},
+	"devDependencies": {
+		"nodemon": "^3.0.1",
+		"ts-node": "^10.9.1",
+		"type-fest": "^4.0.0"
+	}
+}
