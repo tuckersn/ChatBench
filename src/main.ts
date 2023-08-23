@@ -17,14 +17,28 @@ async function createWindow () {
         height: 600,
         webPreferences: {
             nodeIntegration: true,
-            preload: path.join(__dirname, '../dist/window-renderer-preload.js'),
+            preload: path.join(__dirname, '../dist/renderer-preload.js'),
             devTools: true,
-        }
+        },
+        frame: false,
     });
 
     win.webContents.openDevTools();
     win.loadFile('../preload.html')
+    win.webContents.once('did-finish-load', (event: electron.Event) => {
+        win.loadURL("http://localhost:3000");
+    })
 
+
+    ipcMain.handle("minimize", ({
+        frameId,
+        processId,
+        sender
+    }) => {
+        if (sender.id === win.webContents.id) {
+            win.minimize();
+        }
+    });
 
 }
 
@@ -35,6 +49,8 @@ app.whenReady().then(() => {
             await createWindow()
         }
     })
+
+
 })
 
 app.on('window-all-closed', () => {
