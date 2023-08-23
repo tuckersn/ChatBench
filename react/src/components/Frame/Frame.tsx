@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { SideBar } from "./SideBar";
 import { BrowserWindow } from "electron";
 import { BORDER_COLOR } from "../../core/globals";
-import { ChatPane } from "./ChatPane";
+import { Outlet } from "react-router-dom";
 
 
 
@@ -46,6 +46,12 @@ const TitleBar = styled.div`
 
 `;
 
+const ContentContainer = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+`;
+
 
 
 export const Frame: React.FC<{
@@ -79,6 +85,9 @@ export const Frame: React.FC<{
             />
 
         </TitleBar>
-        <ChatPane/>
+        <ContentContainer>
+            <SideBar/>
+            <Outlet/>
+        </ContentContainer>;
     </FrameContainer>;
 }

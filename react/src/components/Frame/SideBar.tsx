@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import * as React from "react";
 
-import { H5, MenuItem, Switch } from "@blueprintjs/core";
+import { H5, Icon, MenuItem, Switch } from "@blueprintjs/core";
 import { Example, ExampleProps } from "@blueprintjs/docs-theme";
 import { ItemRenderer, Suggest } from "@blueprintjs/select";
-import { BORDER_COLOR } from "../../core/globals";
+import { BORDER_COLOR, STATE, addNewConversation, useGlobalState } from "../../core/globals";
+import { Link, useNavigate } from "react-router-dom";
 
 
 module Selection {
@@ -168,36 +169,53 @@ const ChatItemLabelText = styled.div`
 `;
 
 
-const chats = {
-    "chat1": {
-        "name": "Chat 1"
-    },
-    "chat2": {
-        "name": "Chat 2"
-    },
-    "chat3": {
-        "name": "Chat 3"
-    },
-    "chat4": {
-        "name": "Chat 4"
-    },
-    "chat5": {
-        "name": "Chat 5"
-    },
-}
+const AddNewChatBox = styled.div`
+    padding: 8px;
+    color: ${BORDER_COLOR};
+    border: 8px solid ${BORDER_COLOR};
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: bold;
+    vertical-align: middle;
+
+    &:hover {
+        color: white;
+        border-color: white;
+    }
+`;
+
+
+
 
 export const SideBar: React.FC<{}> = ({
 }) => {
+
+    const navigate = useNavigate();
+    const state = useGlobalState();
+    
     return <SideBarContainer>
         <SideBarHeading>
             <Selection.ChatListHistorySearch id="test"></Selection.ChatListHistorySearch>
         </SideBarHeading>
         <ListOfChats>
-        {Object.keys(chats).map((chatId) => {
+            <AddNewChatBox onClick={() => {
+                const convo = addNewConversation();
+                navigate("/chat/" + convo.id);
+            }}>
+                <Icon icon="add" iconSize={20} /> New Conversation
+            </AddNewChatBox>
+        {Object.keys(state.conversations).map((chatId) => {
+            const chat = state.conversations[chatId];
+            if (!chat) {
+                return null;
+            }
             return <ChatItem>
                 <img src="" height="32px" width="32px" />
                 <ChatItemLabelText>
-                    {chats[chatId as keyof typeof chats].name}
+                    <Link to={"/chat/" + chat.id}>
+                        {chat.name}
+                    </Link>
                 </ChatItemLabelText>
                 <button>x</button>
             </ChatItem>
