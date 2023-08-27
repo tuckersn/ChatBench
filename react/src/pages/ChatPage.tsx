@@ -99,7 +99,7 @@ export const ChatPage: React.FC<{}> = () => {
             </ToolbarContainer> */}
             <MessageBox>
                 {
-                    state.activeConversation?.messages.map((message) => {
+                    state.activeChat?.messages.map((message) => {
                         return <ChatMessage {...message}>
                             <ChatMessageAuthor {...message}>
                                 {message.bot ? "Bot" : "Person"} - {new Date(message.timestamp).toLocaleTimeString()}

@@ -205,8 +205,8 @@ export const SideBar: React.FC<{}> = ({
             }}>
                 <Icon icon="add" iconSize={20} /> New Conversation
             </AddNewChatBox>
-        {Object.keys(state.conversations).map((chatId) => {
-            const chat = state.conversations[chatId];
+        {Object.keys(state.chats).map((chatId) => {
+            const chat = state.chats[chatId];
             if (!chat) {
                 return null;
             }

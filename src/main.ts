@@ -2,6 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as electron from "electron";
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { InitIPCForWindow } from "./ipc/ipc";
+import { InitDataFolder } from "./data-folder";
 
 
 
@@ -30,27 +32,24 @@ async function createWindow () {
     })
 
 
-    ipcMain.handle("minimize", ({
-        frameId,
-        processId,
-        sender
-    }) => {
-        if (sender.id === win.webContents.id) {
-            win.minimize();
-        }
-    });
+    await InitIPCForWindow(win);
 
 }
 
-app.whenReady().then(() => {
-    createWindow()
-    app.on('activate', async () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            await createWindow()
-        }
+app.whenReady().then(async () => {
+    
+    Promise.all([
+        InitDataFolder()
+    ]).then(async () => {
+
+        await createWindow()
+        app.on('activate', async () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                await createWindow()
+            }
+        })
+
     })
-
-
 })
 
 app.on('window-all-closed', () => {
@@ -58,3 +57,5 @@ app.on('window-all-closed', () => {
         app.quit()
     }
 })
+
+

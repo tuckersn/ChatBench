@@ -4,57 +4,24 @@ import * as fsp from "fs/promises";
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 
 
-export type Conversation = {
+export type Chat = {
     id: string,
     name: string
 }
 
-export const Conversations: Map<string, Conversation> = new Map<string, Conversation>();
-
-export type ConversationFile = {
-    conversations: {[key: string]: Conversation}
-}
-
-const DEFAULT_CONVERSATIONS_FILE: ConversationFile = {
-    conversations: {}
-}
-
-
-export async function readConversationsFromFile(): Promise<ConversationFile> {
-    const filePath = path.join(app.getPath("home"), ".chatbench/conversations.json");
-
-    if(!fs.existsSync(filePath)) {
-        await fsp.writeFile(filePath, JSON.stringify(DEFAULT_CONVERSATIONS_FILE));
-        return DEFAULT_CONVERSATIONS_FILE;
-    } else {
-        return await JSON.parse(await fsp.readFile(filePath, { encoding: "utf-8" }));
-    }
-}
-
-export async function writeConversationsToFile(): Promise<void> {
-    const filePath = path.join(app.getPath("home"), ".chatbench/conversations.json");
-
-    const obj: any = {};
-    for(const [key, value] of Conversations.entries()) {
-        obj[key] = value;
-    }
-
-    await fsp.writeFile(filePath, JSON.stringify(obj));
-}
-
-
+export const Chats: Map<string, Chat> = new Map<string, Chat>();
 
 
 
 export type Message = {
     id: string,
     content: string,
-    author: string,
+    bot: boolean,
     timestamp: number,
 }
 
-export type ConversationFullContext = {
-    conversation: Conversation,
+export type FullChatContext = {
+    chat: Chat,
     messages: Message[]
 }
 
@@ -69,22 +36,22 @@ export async function createDirs(): Promise<void> {
     }
 }
 
-export function getFullContext(conversationId: string): ConversationFullContext {
+export function getFullContext(conversationId: string): FullChatContext {
     const filePath = path.join(app.getPath("home"), `.chatbench/conversations/${conversationId}.json`);
 
-    if(!Conversations.has(conversationId)) {
+    if(!Chats.has(conversationId)) {
         throw new Error("Conversation does not exist");
     }
 
     if(!fs.existsSync(filePath)) {
         return {
-            conversation: Conversations.get(conversationId)!,
+            chat: Chats.get(conversationId)!,
             messages: []
         }
     } else {
         const messages: Message[] = JSON.parse(fs.readFileSync(filePath, { encoding: "utf-8" }));
         return {
-            conversation: Conversations.get(conversationId)!,
+            chat: Chats.get(conversationId)!,
             messages
         }
     }
